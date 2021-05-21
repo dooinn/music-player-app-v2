@@ -1,11 +1,12 @@
 import React from 'react'
+import { Container } from '../styles/SongPlayerElements'
 
 const SongPlayer = () => {
     return (
-        <div>
+        <Container>
             <h1>SongPlayer</h1>
 
-        </div>
+        </Container>
     )
 }
 
