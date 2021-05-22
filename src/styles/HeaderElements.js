@@ -36,7 +36,7 @@ top: 0;
 width: 40rem;
 height: 100%;
 top: 0;
-left: -100%;
+left: -150%;
 z-index: 999;
 background: rgba(0, 0, 0, 0.3);
 position: fixed;
@@ -69,5 +69,9 @@ transition: 0.3s;
 transform: scale(1.2);
 }
 
+.newNav-lists{
+    padding: 3rem 2rem;
+    overflow: auto;
+}
 
 `;

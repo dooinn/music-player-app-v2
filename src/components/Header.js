@@ -3,6 +3,8 @@ import { Nav } from '../styles/HeaderElements'
 import { CgMenuRound as SideBar } from 'react-icons/cg'
 import { BsQuestionCircle as QuestionButton } from 'react-icons/bs'
 import { AiOutlineClose as CloseButton } from 'react-icons/ai'
+import SongList from './SongList'
+import AddSong from './AddSong'
 
 
 const Header = () => {
@@ -25,7 +27,8 @@ const Header = () => {
             <div className={modalOpen ? "modal active" : "modal"} >
                 <CloseButton className="close__btn" onClick={() => showModal()} />
                 <ul className="newNav-lists">
-
+                    <AddSong />
+                    <SongList />
                 </ul>
 
             </div>
