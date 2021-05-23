@@ -3,7 +3,7 @@ import QueuedSongList from "./QueuedSongList";
 import {
     IconButton,
     Slider,
-    makeStyles
+
 } from "@material-ui/core";
 import { SkipPrevious, PlayArrow, SkipNext, Pause } from "@material-ui/icons";
 import QueueMusicIcon from '@material-ui/icons/QueueMusic';
@@ -11,35 +11,9 @@ import { SongContext } from "../App";
 import { useQuery } from "@apollo/react-hooks";
 import { GET_QUEUED_SONGS } from "../graphql/queries";
 import ReactPlayer from "react-player";
-import { Container } from "../styles/SongPlayerElements";
+import { PlayerContainer, Container } from "../styles/SongPlayerElements";
 
-const useStyles = makeStyles(theme => ({
-    container: {
-        display: "flex",
-        justifyContent: "space-between"
-    },
-    details: {
-        display: "flex",
-        flexDirection: "column",
-        padding: "0px 15px"
-    },
-    content: {
-        flex: "1 0 auto"
-    },
-    thumbnail: {
-        width: 150
-    },
-    controls: {
-        display: "flex",
-        alignItems: "center",
-        paddingLeft: theme.spacing(1),
-        paddingRight: theme.spacing(1)
-    },
-    playIcon: {
-        height: 38,
-        width: 38
-    }
-}));
+
 
 function SongPlayer() {
     const { data } = useQuery(GET_QUEUED_SONGS);
@@ -49,7 +23,8 @@ function SongPlayer() {
     const [playedSeconds, setPlayedSeconds] = useState(0);
     const [seeking, setSeeking] = useState(false);
     const [positionInQueue, setPositionInQueue] = useState(0);
-    const classes = useStyles();
+    const [modalOpen, setModalOpen] = useState(false);
+
 
     useEffect(() => {
         const songIndex = data.queue.findIndex(song => song.id === state.song.id);
@@ -99,71 +74,81 @@ function SongPlayer() {
         }
     }
 
+    function showModal() {
+        return setModalOpen(!modalOpen)
+    }
+
     return (
         <>
             <Container>
-                <div className="left-container">
-                    <div>
-                        <h2 className="song-title">{state.song.title}</h2>
-                        <p className="song-artist"> {state.song.artist}</p>
-                    </div>
-                    <div className="bottom-container">
-                        <div className={classes.controls}>
-                            <IconButton onClick={handlePlayPrevSong}>
-                                <SkipPrevious />
-                            </IconButton>
-                            <IconButton onClick={handleTogglePlay}>
-                                {state.isPlaying ? (
-                                    <Pause className={classes.playIcon} />
-                                ) : (
-                                    <PlayArrow className={classes.playIcon} />
-                                )}
-                            </IconButton>
-                            <IconButton onClick={handlePlayNextSong}>
-                                <SkipNext />
-                            </IconButton>
-                            <p className="song-artist">{formatDuration(playedSeconds)}</p>
-                        </div>
+                <div className={modalOpen ? "modal active" : "modal"} >
+                    <QueuedSongList queue={data.queue} />
+                </div>
+                <PlayerContainer>
+                    <div className="left-container">
                         <div>
-                            <QueueMusicIcon />
+                            <h2 className="song-title">{state.song.title}</h2>
+                            <p className="song-artist"> {state.song.artist}</p>
+                        </div>
+                        <div className="bottom-container">
+                            <div>
+                                <IconButton onClick={handlePlayPrevSong}>
+                                    <SkipPrevious />
+                                </IconButton>
+                                <IconButton onClick={handleTogglePlay}>
+                                    {state.isPlaying ? (
+                                        <Pause />
+                                    ) : (
+                                        <PlayArrow />
+                                    )}
+                                </IconButton>
+                                <IconButton onClick={handlePlayNextSong}>
+                                    <SkipNext />
+                                </IconButton>
+                                <p className="song-artist">{formatDuration(playedSeconds)}</p>
+                            </div>
+                            <div className="queueList-btn">
+                                <QueueMusicIcon onClick={showModal} />
+
+                            </div>
 
                         </div>
 
+
+                        <Slider
+                            onMouseDown={handleSeekMouseDown}
+                            onMouseUp={handleSeekMouseUp}
+                            onChange={handleProgressChange}
+                            value={played}
+                            type="range"
+                            min={0}
+                            max={1}
+                            step={0.01}
+                        />
+                    </div>
+                    <div className="right-container">
+                        <img className="song-thumbnail" src={state.song.thumbnail} alt={state.song.title}></img>
                     </div>
 
 
-                    <Slider
-                        onMouseDown={handleSeekMouseDown}
-                        onMouseUp={handleSeekMouseUp}
-                        onChange={handleProgressChange}
-                        value={played}
-                        type="range"
-                        min={0}
-                        max={1}
-                        step={0.01}
+                    <ReactPlayer
+                        ref={reactPlayerRef}
+                        onProgress={({ played, playedSeconds }) => {
+                            if (!seeking) {
+                                setPlayed(played);
+                                setPlayedSeconds(playedSeconds);
+                            }
+                        }}
+                        url={state.song.url}
+                        playing={state.isPlaying}
+                        hidden
                     />
-                </div>
-                <div className="right-container">
-                    <img className="song-thumbnail" src={state.song.thumbnail} alt={state.song.title}></img>
-                </div>
 
 
-                <ReactPlayer
-                    ref={reactPlayerRef}
-                    onProgress={({ played, playedSeconds }) => {
-                        if (!seeking) {
-                            setPlayed(played);
-                            setPlayedSeconds(playedSeconds);
-                        }
-                    }}
-                    url={state.song.url}
-                    playing={state.isPlaying}
-                    hidden
-                />
-
+                </PlayerContainer>
 
             </Container>
-            {/* <QueuedSongList queue={data.queue} /> */}
+
         </>
     );
 }

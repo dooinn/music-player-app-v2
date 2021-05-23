@@ -11,6 +11,7 @@ padding: 0rem 3rem;
 position: fixed;
 color: white;
 top: 0;
+z-index: 999;
 
 .logo {
     font-family: 'Pattaya', sans-serif;
@@ -38,14 +39,14 @@ height: 100%;
 top: 0;
 left: -150%;
 z-index: 999;
-background: rgba(0, 0, 0, 0.3);
+background: black;
 position: fixed;
 display: flex;
 flex-direction: column;
 justify-content: center;
 align-items: center;
 transition: 350ms;
-opacity: 0.9;
+
 }
 
 .modal.active{
