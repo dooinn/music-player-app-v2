@@ -23,7 +23,7 @@ const Header = () => {
                 onClick={() => showModal()}
             />
             <h1 className="logo">JukeBoxer</h1>
-            <QuestionButton className="nav-btn" />
+            <QuestionButton style={{ opacity: 0 }} />
             <div className={modalOpen ? "modal active" : "modal"} >
                 <CloseButton className="close__btn" onClick={() => showModal()} />
                 <ul className="newNav-lists">
