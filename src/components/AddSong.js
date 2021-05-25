@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
     TextField,
     InputAdornment,
@@ -9,12 +9,13 @@ import {
     DialogActions,
     makeStyles
 } from "@material-ui/core";
-import { Link, AddBoxOutlined } from "@material-ui/icons";
+import { Link } from "@material-ui/icons";
 import ReactPlayer from "react-player";
 import SoundcloudPlayer from "react-player/lib/players/SoundCloud";
 import YoutubePlayer from "react-player/lib/players/YouTube";
 import { useMutation } from "@apollo/react-hooks";
 import { ADD_SONG } from "../graphql/mutations";
+import { Container } from '../styles/AddSongElements'
 
 const useStyles = makeStyles(theme => ({
     container: {
@@ -45,12 +46,12 @@ const DEFAULT_SONG = {
 function AddSong() {
     const classes = useStyles();
     const [addSong, { error }] = useMutation(ADD_SONG);
-    const [url, setUrl] = React.useState("");
-    const [playable, setPlayable] = React.useState(false);
-    const [dialog, setDialog] = React.useState(false);
-    const [song, setSong] = React.useState(DEFAULT_SONG);
+    const [url, setUrl] = useState("");
+    const [playable, setPlayable] = useState(false);
+    const [dialog, setDialog] = useState(false);
+    const [song, setSong] = useState(DEFAULT_SONG);
 
-    React.useEffect(() => {
+    useEffect(() => {
         const isPlayable =
             SoundcloudPlayer.canPlay(url) || YoutubePlayer.canPlay(url);
         setPlayable(isPlayable);
@@ -132,7 +133,7 @@ function AddSong() {
 
     const { thumbnail, title, artist } = song;
     return (
-        <div className={classes.container}>
+        <Container>
             <Dialog
                 className={classes.dialog}
                 open={dialog}
@@ -185,34 +186,34 @@ function AddSong() {
           </Button>
                 </DialogActions>
             </Dialog>
-            <TextField
-                className={classes.urlInput}
-                onChange={event => setUrl(event.target.value)}
-                value={url}
-                placeholder="Add Youtube or Soundcloud Url"
-                fullWidth
-                margin="normal"
-                type="url"
-                InputProps={{
-                    startAdornment: (
-                        <InputAdornment position="start">
-                            <Link />
-                        </InputAdornment>
-                    )
-                }}
-            />
-            <Button
-                disabled={!playable}
-                className={classes.addSongButton}
-                onClick={() => setDialog(true)}
-                variant="contained"
-                color="primary"
-                endIcon={<AddBoxOutlined />}
-            >
-                Add
-      </Button>
+            <div className="input-button-container">
+                <input
+                    className="url-input"
+                    onChange={event => setUrl(event.target.value)}
+                    value={url}
+                    placeholder="Add Youtube or Soundcloud Url"
+                    fullWidth
+                    type="url"
+                    InputProps={{
+                        startAdornment: (
+                            <InputAdornment position="start">
+                                <Link />
+                            </InputAdornment>
+                        )
+                    }}
+                />
+                <button
+                    className="url-button"
+                    disabled={!playable}
+                    onClick={() => setDialog(true)}
+                    variant="contained"
+                >
+                    Add
+      </button>
+            </div>
+
             <ReactPlayer url={url} hidden onReady={handleEditSong} />
-        </div>
+        </Container>
     );
 }
 
